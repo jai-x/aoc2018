@@ -2,7 +2,11 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#define ARR_MAX 1000
+#define LINE_MAX 256
+#define ARR_MAX 1234567890
+
+static char line[LINE_MAX];
+static int frequency = 0;
 
 static int seen[ARR_MAX];
 static int seen_end = 0;
@@ -11,6 +15,11 @@ static void
 store(int val)
 {
 	seen[seen_end++] = val;
+	
+	if (seen_end > ARR_MAX) {
+		printf("Make array bigger!\n");
+		exit(EXIT_FAILURE);
+	}
 }
 
 static bool
@@ -28,33 +37,31 @@ int
 main(int argc, char** argv)
 {
 	FILE* input;
-	char line[ARR_MAX];
-	int frequency = 0;
 
 	if (argc != 2) {
 		printf("Please specify input text file as only argument.\n");
-		return EXIT_FAILURE;
+		exit(EXIT_FAILURE);
 	}
 
 	input = fopen(argv[1], "r");
 	if (!input) {
 		printf("Not a valid file: %s\n", argv[1]);
-		return EXIT_FAILURE;
+		exit(EXIT_FAILURE);
 	}
 
-	while (fgets(line, ARR_MAX, input)) {
-		int diff = atoi(line);
-		frequency += diff;
+	while (true) {
+		while (fgets(line, sizeof(line), input)) {
+			frequency += atoi(line);
 
-		// What's wrong?
-		if (already_seen(frequency)) {
-			printf("Duplicate frequency found: %d\n", frequency);
-			return EXIT_SUCCESS;
-		} else {
-			store(frequency);
+			if (already_seen(frequency)) {
+				printf("Duplicate frequency found: %d\n", frequency);
+				exit(EXIT_SUCCESS);
+			} else {
+				store(frequency);
+			}
 		}
-	}
 
-	printf("Solution not found!\n");
-	return EXIT_FAILURE;
+		fseek(input, 0, SEEK_END);
+		fseek(input, 0, SEEK_SET);
+	}
 }
