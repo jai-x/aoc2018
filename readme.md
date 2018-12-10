@@ -2,5 +2,5 @@
 
 **Status**:
 
-* Day 1 - Task 1: Complete
-* Day 1 - Task 2: Complete
+* Day 1 - Task 1: Complete (in C and Go)
+* Day 1 - Task 2: Complete (in C and Go)
